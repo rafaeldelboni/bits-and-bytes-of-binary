@@ -7,6 +7,9 @@ fn main() {
     println!("Binary: 17");
     println!("{:?}", bits::number_to_bits(174u32));
 
-    println!("AND: [1, 1, 0, 0] & [1, 0, 0, 1]");
-    println!("{:?}", bits::and(vec![1, 1, 0, 0], vec![1, 0, 0, 1]));
+    println!("AND: [1, 0, 1, 1] & [1, 0, 0, 1]");
+    println!("{:?}", bits::and(vec![1, 0, 1, 1], vec![1, 0, 0, 1]));
+
+    println!("OR: [1, 0, 1, 1] & [1, 0, 0, 1]");
+    println!("{:?}", bits::or(vec![1, 0, 1, 1], vec![1, 0, 0, 1]));
 }

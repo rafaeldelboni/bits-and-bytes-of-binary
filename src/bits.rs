@@ -44,6 +44,10 @@ pub fn and (left: Bits, right: Bits) -> Bits {
     apply_both_bits(left, right, std::ops::BitAnd::bitand)
 }
 
+pub fn or (left: Bits, right: Bits) -> Bits {
+    apply_both_bits(left, right, std::ops::BitOr::bitor)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -94,18 +98,27 @@ mod tests {
         assert_eq!(assert_same_number_of_bits(vec![0, 1], vec![0]), false);
     }
 
-
     #[test]
-    fn test_and() {
-        assert_eq!(and(vec![1, 0, 1, 1], vec![1, 1, 0, 1]), vec![1, 0, 0, 1]);
-        assert_eq!(and(vec![1, 1, 1, 1], vec![0, 0, 0, 0]), vec![0, 0, 0, 0]);
-        assert_eq!(and(vec![0, 0, 0, 0], vec![1, 1, 1, 1]), vec![0, 0, 0, 0]);
-        assert_eq!(and(vec![1, 1, 1, 1], vec![1, 1, 1, 1]), vec![1, 1, 1, 1]);
+    #[should_panic(expected = "Bit mismatch (l= 2, r= 1)")]
+    fn test_apply_both_bits_panic() {
+        apply_both_bits(vec![1, 1], vec![1], std::ops::Add::add);
     }
 
     #[test]
-    #[should_panic(expected = "Bit mismatch (l= 2, r= 1)")]
-    fn test_and_panic() {
-        and(vec![1, 1], vec![1]);
+    fn test_and() {
+        assert_eq!(and(vec![1, 0, 1, 1], vec![1, 0, 0, 1]), vec![1, 0, 0, 1]);
+        assert_eq!(and(vec![1, 1, 1, 1], vec![0, 0, 0, 0]), vec![0, 0, 0, 0]);
+        assert_eq!(and(vec![0, 0, 0, 0], vec![1, 1, 1, 1]), vec![0, 0, 0, 0]);
+        assert_eq!(and(vec![1, 1, 1, 1], vec![1, 1, 1, 1]), vec![1, 1, 1, 1]);
+        assert_eq!(and(vec![0, 0, 0, 0], vec![0, 0, 0, 0]), vec![0, 0, 0, 0]);
+    }
+
+    #[test]
+    fn test_or() {
+        assert_eq!(or(vec![1, 0, 1, 1], vec![1, 0, 0, 1]), vec![1, 0, 1, 1]);
+        assert_eq!(or(vec![1, 1, 1, 1], vec![0, 0, 0, 0]), vec![1, 1, 1, 1]);
+        assert_eq!(or(vec![0, 0, 0, 0], vec![1, 1, 1, 1]), vec![1, 1, 1, 1]);
+        assert_eq!(or(vec![1, 1, 1, 1], vec![1, 1, 1, 1]), vec![1, 1, 1, 1]);
+        assert_eq!(or(vec![0, 0, 0, 0], vec![0, 0, 0, 0]), vec![0, 0, 0, 0]);
     }
 }
