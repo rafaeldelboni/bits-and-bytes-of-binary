@@ -48,6 +48,10 @@ pub fn or (left: Bits, right: Bits) -> Bits {
     apply_both_bits(left, right, std::ops::BitOr::bitor)
 }
 
+pub fn xor (left: Bits, right: Bits) -> Bits {
+    apply_both_bits(left, right, std::ops::BitXor::bitxor)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -120,5 +124,14 @@ mod tests {
         assert_eq!(or(vec![0, 0, 0, 0], vec![1, 1, 1, 1]), vec![1, 1, 1, 1]);
         assert_eq!(or(vec![1, 1, 1, 1], vec![1, 1, 1, 1]), vec![1, 1, 1, 1]);
         assert_eq!(or(vec![0, 0, 0, 0], vec![0, 0, 0, 0]), vec![0, 0, 0, 0]);
+    }
+
+    #[test]
+    fn test_xor() {
+        assert_eq!(xor(vec![1, 0, 1, 1], vec![1, 0, 0, 1]), vec![0, 0, 1, 0]);
+        assert_eq!(xor(vec![1, 1, 1, 1], vec![0, 0, 0, 0]), vec![1, 1, 1, 1]);
+        assert_eq!(xor(vec![0, 0, 0, 0], vec![1, 1, 1, 1]), vec![1, 1, 1, 1]);
+        assert_eq!(xor(vec![1, 1, 1, 1], vec![1, 1, 1, 1]), vec![0, 0, 0, 0]);
+        assert_eq!(xor(vec![0, 0, 0, 0], vec![0, 0, 0, 0]), vec![0, 0, 0, 0]);
     }
 }

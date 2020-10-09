@@ -12,4 +12,7 @@ fn main() {
 
     println!("OR: [1, 0, 1, 1] & [1, 0, 0, 1]");
     println!("{:?}", bits::or(vec![1, 0, 1, 1], vec![1, 0, 0, 1]));
+
+    println!("XOR: [1, 0, 1, 1] & [1, 0, 0, 1]");
+    println!("{:?}", bits::xor(vec![1, 0, 1, 1], vec![1, 0, 0, 1]));
 }
