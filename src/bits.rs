@@ -23,8 +23,8 @@ pub fn number_to_bits (number: u32) -> Bits {
     }
 }
 
-fn assert_same_number_of_bits (bits_a: Bits, bits_b: Bits) -> bool {
-    bits_a.len() == bits_b.len()
+fn assert_same_number_of_bits (left: Bits, right: Bits) -> bool {
+    left.len() == right.len()
 }
 
 fn apply_both_bits <F>(left: Bits, right: Bits, mut apply: F) -> Bits
@@ -50,6 +50,12 @@ pub fn or (left: Bits, right: Bits) -> Bits {
 
 pub fn xor (left: Bits, right: Bits) -> Bits {
     apply_both_bits(left, right, std::ops::BitXor::bitxor)
+}
+
+pub fn not (bits: Bits) -> Bits {
+    bits.iter()
+        .map(|bit| if *bit == 1u8 {0} else {1})
+        .collect()
 }
 
 #[cfg(test)]
@@ -133,5 +139,12 @@ mod tests {
         assert_eq!(xor(vec![0, 0, 0, 0], vec![1, 1, 1, 1]), vec![1, 1, 1, 1]);
         assert_eq!(xor(vec![1, 1, 1, 1], vec![1, 1, 1, 1]), vec![0, 0, 0, 0]);
         assert_eq!(xor(vec![0, 0, 0, 0], vec![0, 0, 0, 0]), vec![0, 0, 0, 0]);
+    }
+
+    #[test]
+    fn test_not() {
+        assert_eq!(not(vec![1, 0, 1, 1]), vec![0, 1, 0, 0]);
+        assert_eq!(not(vec![1, 1, 1, 1]), vec![0, 0, 0, 0]);
+        assert_eq!(not(vec![0, 0, 0, 0]), vec![1, 1, 1, 1]);
     }
 }

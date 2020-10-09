@@ -15,4 +15,7 @@ fn main() {
 
     println!("XOR: [1, 0, 1, 1] & [1, 0, 0, 1]");
     println!("{:?}", bits::xor(vec![1, 0, 1, 1], vec![1, 0, 0, 1]));
+
+    println!("NOT: [1, 0, 1, 1]");
+    println!("{:?}", bits::not(vec![1, 0, 1, 1]));
 }
