@@ -27,15 +27,21 @@ fn assert_same_number_of_bits (bits_a: Bits, bits_b: Bits) -> bool {
     bits_a.len() == bits_b.len()
 }
 
-pub fn and (bits_a: Bits, bits_b: Bits) -> Bits {
-    if !assert_same_number_of_bits(bits_a.clone(), bits_b.clone()) {
-        panic!("Bit mismatch (a= {}, b = {})", bits_a.len(), bits_b.len());
+fn apply_both_bits <F>(left: Bits, right: Bits, mut apply: F) -> Bits
+    where F: FnMut(u8, u8) -> u8
+{
+    if !assert_same_number_of_bits(left.clone(), right.clone()) {
+        panic!("Bit mismatch (l= {}, r= {})", left.len(), right.len());
     }
 
-    bits_a.iter()
-        .zip(bits_b.iter())
-        .map(|(a, b)| a & b)
+    left.iter()
+        .zip(right.iter())
+        .map(|(a, b)| apply(*a, *b))
         .collect()
+}
+
+pub fn and (left: Bits, right: Bits) -> Bits {
+    apply_both_bits(left, right, std::ops::BitAnd::bitand)
 }
 
 #[cfg(test)]
@@ -98,7 +104,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "Bit mismatch (a= 2, b = 1)")]
+    #[should_panic(expected = "Bit mismatch (l= 2, r= 1)")]
     fn test_and_panic() {
         and(vec![1, 1], vec![1]);
     }
