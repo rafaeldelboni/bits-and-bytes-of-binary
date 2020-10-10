@@ -58,28 +58,36 @@ pub fn not (bits: Bits) -> Bits {
         .collect()
 }
 
-struct AddCarryBit {
-    carry_bit: u8,
-    sum_bits: Bits,
+fn size_diff_bits (left: &Bits, right: &Bits) -> usize {
+    (left.len() as isize - right.len() as isize).max(0) as usize
+}
+
+fn zero_extend_size(bits: &Bits, size: usize) -> Bits {
+    [vec![0; size], bits.clone()].concat()
 }
 
 pub fn add (left: Bits, right: Bits) -> Bits {
-    left.iter().rev()
-        .zip(right.iter().rev())
-        .fold(AddCarryBit{carry_bit: 0, sum_bits: Bits::new()}, |acc, (left, right)|
+    let zero_fill_left = zero_extend_size(&left, size_diff_bits(&right, &left));
+    let zero_fill_right = zero_extend_size(&right, size_diff_bits(&left, &right));
+
+    let sum_bits_tuple = zero_fill_left.iter().rev()
+        .zip(zero_fill_right.iter().rev())
+        .fold((0, Bits::new()), |(carry_bit, sum_bits), (left, right)|
             {
                 let lr_sum = left ^ right;
                 let lr_carry = left & right;
 
-                let lr_sum_plus_carry = lr_sum ^ acc.carry_bit;
-                let lr_sum_carry = lr_sum & acc.carry_bit;
+                let lr_sum_plus_carry = lr_sum ^ carry_bit;
+                let lr_sum_carry = lr_sum & carry_bit;
 
-                AddCarryBit {
-                    carry_bit: lr_carry | lr_sum_carry,
-                    sum_bits: [acc.sum_bits, vec![lr_sum_plus_carry as u8]].concat(),
-                }
+                (
+                    lr_carry | lr_sum_carry,
+                    [sum_bits, vec![lr_sum_plus_carry]].concat(),
+                )
             }
-        ).sum_bits.into_iter().rev().collect()
+        );
+
+    [vec![sum_bits_tuple.0], sum_bits_tuple.1.into_iter().rev().collect()].concat()
 }
 
 #[cfg(test)]
@@ -170,5 +178,19 @@ mod tests {
         assert_eq!(not(vec![1, 0, 1, 1]), vec![0, 1, 0, 0]);
         assert_eq!(not(vec![1, 1, 1, 1]), vec![0, 0, 0, 0]);
         assert_eq!(not(vec![0, 0, 0, 0]), vec![1, 1, 1, 1]);
+    }
+
+    #[test]
+    fn test_zero_extend_size() {
+        assert_eq!(zero_extend_size(&vec![1], 4), vec![0, 0, 0, 0, 1]);
+        assert_eq!(zero_extend_size(&vec![1, 1], 4), vec![0, 0, 0, 0, 1, 1]);
+        assert_eq!(zero_extend_size(&vec![1, 0, 1], 4), vec![0, 0, 0, 0, 1, 0, 1]);
+    }
+
+    #[test]
+    fn test_add() {
+        assert_eq!(add(vec![1], vec![1]), vec![1, 0]);
+        assert_eq!(add(vec![1, 1, 1], vec![1, 0, 1, 0, 0]), vec![0, 1, 1, 0, 1, 1]);
+        assert_eq!(add(vec![1, 0, 0], vec![1, 0, 0, 0, 0]), vec![0, 1, 0, 1, 0, 0]);
     }
 }
