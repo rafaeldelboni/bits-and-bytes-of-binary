@@ -18,4 +18,8 @@ fn main() {
 
     println!("NOT: [1, 0, 1, 1]");
     println!("{:?}", bits::not(vec![1, 0, 1, 1]));
+
+
+    println!("Add: [0, 0, 1, 0] & [0, 0, 1, 0]");
+    println!("{:?}", bits::bits_to_number(bits::add(vec![0, 0, 1, 1], vec![0, 0, 1, 0])));
 }

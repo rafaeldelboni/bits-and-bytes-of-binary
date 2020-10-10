@@ -58,6 +58,30 @@ pub fn not (bits: Bits) -> Bits {
         .collect()
 }
 
+struct AddCarryBit {
+    carry_bit: u8,
+    sum_bits: Bits,
+}
+
+pub fn add (left: Bits, right: Bits) -> Bits {
+    left.iter().rev()
+        .zip(right.iter().rev())
+        .fold(AddCarryBit{carry_bit: 0, sum_bits: Bits::new()}, |acc, (left, right)|
+            {
+                let lr_sum = left ^ right;
+                let lr_carry = left & right;
+
+                let lr_sum_plus_carry = lr_sum ^ acc.carry_bit;
+                let lr_sum_carry = lr_sum & acc.carry_bit;
+
+                AddCarryBit {
+                    carry_bit: lr_carry | lr_sum_carry,
+                    sum_bits: [acc.sum_bits, vec![lr_sum_plus_carry as u8]].concat(),
+                }
+            }
+        ).sum_bits.into_iter().rev().collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
